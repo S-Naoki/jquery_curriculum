@@ -32,8 +32,12 @@
       // .removeClass() クラスを削除します。
       $(function() {
         $('.nav').find('li').click(function() {
-          var num = $(this).index();
+          var num = $(this).index(); //今回、$(this)はクリックされたli要素を指す。
           $('.contents').find('li').addClass('is-hidden').eq(num).removeClass('is-hidden');
+          //まず、.addClass('is-hidden')によって.contents以下の全てのli要素にclass 'is-hidden'が付与された状態にする。つまり全てのli要素が隠れた状態になる。
+          // そして次に、.eq(num)によってクリックされた要素のindex番号に応じたindexの要素を取得する。
+          //そして対応したindexの要素を.removeClass('is-hidden')によってin-hiddenというclassを外す。それによって、テキストが隠された状態から表示された状態になる。
+
         })
       })
     </script>

@@ -100,13 +100,13 @@
 
       $(function() {
         $('.select').change(function() {
-          var value = $(this).val();
-          if (value == 'all') {
-
+          var value = $(this).val(); //selectボックスの値を変更した際にvalue属性を取得する。
+          if (value === 'all') {
+            $('.list li').show();
           } else {
             $('.list li').each(function() { //９個あるli要素を一つ一つ回していく。
               var data = $(this).data('category-type');
-              if (value == data) {
+              if (value === data) {
                 $(this).show();
               } else {
                 $(this).hide();
