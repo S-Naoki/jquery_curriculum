@@ -11,7 +11,8 @@
   </head>
   <body>
     <div class="wrapper">
-      <ul class="colorList"></ul>
+      <ul class="colorList">
+      </ul>
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
@@ -42,6 +43,28 @@
       // </li>
       //
       // このテンプレートに取得してきた中身を入れて表示します。
+
+
+      $(function() {
+            $.ajax({
+              url: './data.json',
+              type: 'GET',
+              dataType: 'json',
+              data: 'colorsArray'
+            })
+            .done(function(data) {
+
+              console.log(data);
+
+              $.each(data.colorsArray, function (index, value) {
+
+                var listElement = $('<li class="colorList__item"><p class="colorList__title" style="background-color:' + value.hexValue + ';">'+ value.colorName +'</p></li>');
+
+                $('ul').append(listElement);
+
+              });
+            });
+          });
     </script>
   </body>
 </html>

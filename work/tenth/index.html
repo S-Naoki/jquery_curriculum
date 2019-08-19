@@ -68,6 +68,109 @@
       //
       //
       //
+
+      // ・ httpメソッドのGETとPOSTの説明
+      // GETはURLに渡す値を付与する。渡した値が履歴に残る。
+      // POSTはbodyに渡す値を含める。人間の目には見えない。GETメソッドよりも渡せる情報が多い。
+
+      // ・ APIの説明
+      // アプリケーションプログラミングインターフェイス
+      // アプリケーションとプログラムをつなぐもの
+      // APIを公開することで、APIという外部とやりとりする窓口を作り、外部アプリと連携可能な状態にする。
+      // メリットは自分で１から開発する必要がなくなり工数を削減できる。
+
+
+      var pageNum = 0;
+      var keyword = '';
+
+      $(function() {
+
+        $('.search__btn').on('click', function() {
+
+          var searchWord = $('#js-search-word').val();
+
+          if (keyword !== searchWord) { //一回目は変数keywordには空文字が入っているので、必ず条件が成立する。
+          $("ul").empty(); //一旦、ul以下の要素をからにしてあげる。つまりこの時表示されているページの要素をからにする。
+          keyword = searchWord //ここで初めてkeywordに1回目の検索キーワードのvalue値がはいる。 それによって、keyword(前回の検索ワード) vs.searchWord(今回の検索ワード)この二つの変数の比較が始まる。
+            pageNum = 1; //上記を比較した結果、条件が成立する場合はpage数が１となる。
+          } else {
+            pageNum += 1; //条件が成立しない場合は、ページ数をプラス１する。
+          };
+
+          console.log(searchWord);
+          receive__and__update__data(searchWord);
+        });
+
+
+
+
+
+
+        function  receive__and__update__data(word) {
+
+          $.ajax({
+            url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+              keyword: word,
+              hits: '20',
+              page: pageNum,
+              applicationId: '1019399324990976605',
+              booksGenreId: '001'
+            }
+          })
+          .done(function (data) {
+            console.log(data)
+            done(data);
+          })
+          .fail(function(err) {
+            console.log(err);
+            fail(err);
+            });
+
+            function done(data) { //doneのfunciton処理。
+
+              if (data.count === 0) {
+                $('ul').html('<p>検索結果が見つかりませんでした。別のキーワードで検索してください。</p>');
+              }
+
+              var listElement = '';
+              $.each(data.Items, function (index, value) {
+
+              //関数を作成して代入,doneのなかは一行
+                  listElement += '<li class="lists__item">' + '<div class="lists__item__inner">' + '<a href="' +
+                  value.Item.itemUrl + '"class="lists__item__link" target="_blank">' + '<img src="' + value.Item
+                  .largeImageUrl + '" class="lists__item__img" alt="' + value.Item.title + '">' +
+                  '<p class="lists__item__detail">作品名： ' + value.Item.title + '</p>' +
+                  '<p class="lists__item__detail">作者： ' + value.Item.author + '</p>' +
+                  '<p class="lists__item__detail">出版社： ' + value.Item.publisherName + '</p>' + '</a>' +
+                  '</div>' + '</li>';
+              });
+              $('ul').prepend(listElement);
+
+            }
+
+            function fail(err) { //failのfunction処理。
+
+              if (err.responseJSON.error_description === 'keyword must be set') { //まず、errのmessageを確認したいので、errオブジェクトのなかのresponseJSONのkeyである、error_descriptionを確認。
+                var err__text = '検索キーワードを入力してください';
+
+              } else if (err.responseJSON.error_description === 'keyword length must be over 2 characters') {
+                console.log('検索キーワードは2文字以上でなければいけません。');
+                var err__text = '検索キーワードは2文字以上でなければいけません。';
+              } else if(err.responseJSON.error_description === 'number of allowed requests has been exceeded for this API. please try again soon.') {
+                console.log('検索ボタンを連打しないでください。')
+                var err__text = '検索ボタンを連打しないでください。'
+              } else if(err.responseJSON.error_description === 'undefined'){
+                var err__text = 'インターネットに接続されていません。'
+              } else {
+                $('ul').html('<p>'+ err.responseJSON.error_description +'</p>');
+              }
+              $('ul').html('<p>'+ err__text +'</p>');
+            }
+          };
+        });
     </script>
   </body>
 </html>

@@ -100,11 +100,12 @@
 
       $(function() {
         $('.select').change(function() {
+          //上が示す意味は、セレクトボックスの値を変更した場合にfunction関数のなかの処理が実行される。
           var value = $(this).val(); //selectボックスの値を変更した際にvalue属性を取得する。
-          if (value === 'all') {
+          if (value === 'all') { //まずはAllを選択した場合に全てのli要素を表示させるようにしたいので、value値がallの場合に全表示する処理を記述する。
             $('.list li').show();
-          } else {
-            $('.list li').each(function() { //９個あるli要素を一つ一つ回していく。
+          } else { //value = 'all'ではない場合
+            $('.list li').each(function() { //９個あるli要素一つ一つにfunction以下の処理を回していく。
               var data = $(this).data('category-type');
               if (value === data) {
                 $(this).show();
